@@ -5,8 +5,13 @@ import { Search, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { User } from '@supabase/supabase-js'
 
-const Header = () => {
+interface HeaderProps {
+  user?: User | null
+}
+
+const Header = ({ user }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
@@ -53,9 +58,24 @@ const Header = () => {
                 {item.label}
               </Link>
             ))}
-            <Button variant="default" size="sm">
-              👤 로그인
-            </Button>
+            {user ? (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">
+                  안녕하세요, {user.email}
+                </span>
+                <form action="/auth/signout" method="post">
+                  <Button variant="outline" size="sm" type="submit">
+                    로그아웃
+                  </Button>
+                </form>
+              </div>
+            ) : (
+              <Link href="/login">
+                <Button variant="default" size="sm">
+                  👤 로그인
+                </Button>
+              </Link>
+            )}
           </nav>
 
           {/* 모바일 메뉴 버튼 */}
@@ -101,9 +121,24 @@ const Header = () => {
                 </Link>
               ))}
               <div className="px-3 py-2">
-                <Button variant="default" size="sm" className="w-full">
-                  👤 로그인
-                </Button>
+                {user ? (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">
+                      안녕하세요, {user.email}
+                    </p>
+                    <form action="/auth/signout" method="post">
+                      <Button variant="outline" size="sm" className="w-full" type="submit">
+                        로그아웃
+                      </Button>
+                    </form>
+                  </div>
+                ) : (
+                  <Link href="/login">
+                    <Button variant="default" size="sm" className="w-full">
+                      👤 로그인
+                    </Button>
+                  </Link>
+                )}
               </div>
             </nav>
           </div>
